@@ -377,8 +377,21 @@ step "Every scripts/ path this skill names is one it ships"
 # would make the rule below assert the opposite of what it means. A bare
 # `scripts/<name>` — at a line start, after a space, a backtick or a quote — is
 # still a promise about THIS skill, and is still checked.
+# `xargs -0 grep`, NOT `xargs -0 command grep`. xargs execs its argument
+# DIRECTLY — there is no shell in between, so there is no alias or function for
+# `command` to bypass and nothing it could have been protecting. What it did do
+# is depend on a `/usr/bin/command` BINARY, which exists on macOS and does not
+# exist on Linux. On any GNU host xargs failed with "command: No such file or
+# directory", the `|| true` swallowed it, $NAMED came back EMPTY, and the two
+# assertions below it passed vacuously — which is precisely the failure mode the
+# comment above says this sweep exists to prevent. Only the membership floor
+# caught it. (`| command sed` on the next line is a real shell pipeline, where
+# `command` IS the builtin and is correct; the distinction is xargs, not sed.)
+#
+# Found by running this suite on a Linux runner — the first non-macOS host it
+# had ever executed on, because until now it had never executed in CI at all.
 NAMED="$(cd "$SCRIPT_DIR/.." && git ls-files -z 2>/dev/null \
-  | xargs -0 command grep -ohE '(^|[^/A-Za-z0-9_.-])scripts/[A-Za-z0-9_][A-Za-z0-9_.-]*' 2>/dev/null \
+  | xargs -0 grep -ohE '(^|[^/A-Za-z0-9_.-])scripts/[A-Za-z0-9_][A-Za-z0-9_.-]*' 2>/dev/null \
   | command sed 's#^.*[^A-Za-z0-9_.-]scripts/##; s#^scripts/##; s/[.,;:]*$//' | sort -u || true)"
 MISSING_FLOOR=""
 for want in propagate.sh init-integration.sh add-constituent.sh finalize-constituents.sh verify.sh refresh.sh; do
