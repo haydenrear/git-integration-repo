@@ -72,8 +72,8 @@ description = "Create and operate integration repositories: constituents as ordi
 #     description field, skill-manager.toml, references/ pages, and on the
 #     install/bind/sync round trip that ships an edit into a store ---
 
-[skills.skill-publisher]
-source = "github:haydenrear/skill-publisher-skill"
+[skills.unit-authoring]
+source = "github:haydenrear/skt"
 
 # --- required BY skill-publisher, not chosen here: its SKILL.md `skill-imports`
 #     names `skill-manager` (references/skill-imports.md), and `project resolve`
@@ -88,7 +88,7 @@ source = "github:haydenrear/skill-publisher-skill"
 #     model and the live/frozen policy against it ---
 
 [skills.skill-manager]
-source = "github:haydenrear/skill-manager-skill"
+source = "github:haydenrear/skt"
 
 # --- THE HARD RUNTIME DEPENDENCY OF THIS UNIT. `wt`, new-change.sh,
 #     close-change.sh, bootstrap-home.sh, agent-home.sh and the shared lib.sh
