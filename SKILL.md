@@ -121,6 +121,24 @@ WT="${SKILL_MANAGER_HOME:-$HOME/.skill-manager}/skills/git-issue-workflow/script
 "$WT" close TICKET-123     # teardown, through the close-out gate
 ```
 
+**Which of those two, and what it means if you take the second.** skt is a
+**plugin**, so it is never under a home's `skills/` — listing that directory
+reports it absent from a home that has it. Test by path:
+
+```bash
+test -x "${SKILL_MANAGER_HOME:-$HOME/.skill-manager}/bin/cli/skt"
+```
+
+If it does not resolve, the `$WT` lines are correct and there is nothing to
+report. If it resolves and you used `$WT` anyway — or read either script and
+replayed its steps by hand — that is a front-door defect, not a fact about this
+repository, and it is invisible unless you say so, because the fallback works.
+Name which case on the PR (installed but not on `PATH`; looked under `skills/`;
+found it and it **failed**, quoting its `error:` line; found it and could not
+read the home it pointed at) and file it against the skill that owns the door.
+Full statement of the rule: `git-issue-workflow`'s `SKILL.md`, §*Reaching a
+by-hand route is itself a finding*.
+
 That is the same lifecycle in an integration repo, in a constituent of one, and
 in an ordinary repo with no constituents at all — it detects which it is
 standing in. Its contract, its one-line output, its refusals and the
@@ -199,6 +217,9 @@ bash <checkout-of-git-integration-skill>/scripts/selftest.sh   # needs no skill-
 skt ticket new TICKET-123                         # preferred where the skt plugin is installed
 WT="${SKILL_MANAGER_HOME:-$HOME/.skill-manager}/skills/git-issue-workflow/scripts/wt"
 $WT new TICKET-123                                # the same door where skt is absent
+#   which one: test -x "${SKILL_MANAGER_HOME:-$HOME/.skill-manager}/bin/cli/skt"
+#   (skt is a PLUGIN — never under skills/; using $WT because skt was not FOUND
+#    rather than not present is reportable — see the worktree section above)
 #   ...edit across constituent files in the one parent worktree, commit...
 git -C <repo-root> merge --no-ff feature/TICKET-123   # bring it back to the integration main tree
 $S/verify.sh                                      # then fan out with propagate.sh, above
