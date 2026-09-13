@@ -21,8 +21,8 @@ skill-imports:
   - unit: deploy-helm
     path: SKILL.md
     reason: Optional environment-repo composition deploys the constituents together to a test cluster.
-  - unit: skill-manager
-    path: references/workflows.md
+  - unit: skt
+    path: skills/skill-manager/references/workflows.md
     reason: This skill is installed and synced as a skill-manager unit.
 ---
 
